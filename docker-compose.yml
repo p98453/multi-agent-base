@@ -1,0 +1,19 @@
+services:
+  multi-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: multi-agent-security
+    env_file:
+      - .env
+    environment:
+      # 容器内关闭热重载（生产模式）
+      - API_RELOAD=false
+      # Streamlit 前端在容器内通过 localhost 访问后端
+      - CORS_ORIGINS=http://localhost:8501,http://127.0.0.1:8501
+    ports:
+      - "8000:8000" # 后端 API
+      - "8501:8501" # 前端界面
+    volumes:
+      - ./logs:/app/logs # 日志持久化到宿主机
+    restart: unless-stopped

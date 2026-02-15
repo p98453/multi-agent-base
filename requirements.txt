@@ -1,0 +1,19 @@
+# 核心依赖（必需）
+python-dotenv==1.0.0
+openai==1.12.0
+loguru==0.7.2
+
+# 后端依赖
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.9.0
+httpx==0.27.0
+
+# 前端依赖
+streamlit==1.40.0
+plotly==5.24.0
+pandas==2.2.0
+requests==2.32.0
+
+# 异步支持
+aiohttp==3.10.0
