@@ -20,7 +20,7 @@ from contextlib import asynccontextmanager
 from loguru import logger
 
 from backend.config import BackendConfig
-from backend.api.routes import analysis, stats
+from backend.api.routes import analysis, stats, rag
 from backend.services.agent_service import get_agent_service
 
 
@@ -96,6 +96,7 @@ app.add_middleware(
 # 路由前缀在各自的文件中定义（均为 /api）
 app.include_router(analysis.router)     # /api/analyze, /api/history
 app.include_router(stats.router)        # /api/stats, /api/health
+app.include_router(rag.router)          # /api/rag/upload, /api/rag/query, /api/rag/clear
 
 
 @app.get("/")

@@ -145,3 +145,62 @@ class APIClient:
         url = f"{self.base_url}/api/stats"
         response = requests.get(url, timeout=self.timeout)
         return self._handle_response(response)
+
+    # ==================== RAG 知识库 API ====================
+
+    def rag_upload(self, texts: List[str], source_name: str = "用户上传") -> Dict[str, Any]:
+        """上传文档文本到 RAG 知识库
+
+        发送 POST 请求到 /api/rag/upload，将文本列表分块存入向量库。
+
+        Args:
+            texts: 文档文本列表
+            source_name: 文档来源名称（显示在检索结果中）
+
+        Returns:
+            dict: {success, chunks_added, message}
+        """
+        url = f"{self.base_url}/api/rag/upload"
+        payload = {"texts": texts, "source_name": source_name}
+        response = requests.post(url, json=payload, timeout=self.timeout)
+        return self._handle_response(response)
+
+    def rag_query(self, question: str, top_k: int = 3) -> Dict[str, Any]:
+        """向知识库提问，获取基于检索的 LLM 答案
+
+        发送 POST 请求到 /api/rag/query，执行检索 + LLM 生成流程。
+
+        Args:
+            question: 用户问题
+            top_k: 检索的最大文档块数量
+
+        Returns:
+            dict: {answer, sources, has_context}
+        """
+        url = f"{self.base_url}/api/rag/query"
+        payload = {"question": question, "top_k": top_k}
+        response = requests.post(url, json=payload, timeout=self.timeout)
+        return self._handle_response(response)
+
+    def rag_clear(self) -> Dict[str, Any]:
+        """清空 RAG 知识库
+
+        发送 DELETE 请求到 /api/rag/clear，删除所有已存储的文档块。
+
+        Returns:
+            dict: {success, deleted_chunks, message}
+        """
+        url = f"{self.base_url}/api/rag/clear"
+        response = requests.delete(url, timeout=self.timeout)
+        return self._handle_response(response)
+
+    def rag_stats(self) -> Dict[str, Any]:
+        """获取 RAG 知识库统计信息
+
+        Returns:
+            dict: {total_chunks, embedding_model, db_path}
+        """
+        url = f"{self.base_url}/api/rag/stats"
+        response = requests.get(url, timeout=self.timeout)
+        return self._handle_response(response)
+

@@ -16,4 +16,5 @@ services:
       - "8501:8501" # 前端界面
     volumes:
       - ./logs:/app/logs # 日志持久化到宿主机
+      - ./chroma_db:/app/chroma_db # RAG 向量库持久化到宿主机
     restart: unless-stopped

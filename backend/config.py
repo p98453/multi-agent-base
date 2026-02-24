@@ -53,6 +53,14 @@ class BackendConfig:
     MODEL_NAME = os.getenv("MODEL_NAME")          # 对话模型名称
     MODEL_URL = os.getenv("MODEL_URL")            # API 基础 URL
     
+    # ===== Embedding 配置（RAG 功能使用）=====
+    EMBEDDING_API_KEY = os.getenv("EMBEDDING_API_KEY", os.getenv("LLM_API_KEY"))   # 默认复用 LLM Key
+    EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-8B")
+    EMBEDDING_URL = os.getenv("EMBEDDING_URL", "https://api.siliconflow.cn/v1")
+    
+    # ChromaDB 本地持久化路径（相对于项目根目录）
+    CHROMA_DB_PATH = str(BASE_DIR / "chroma_db")
+    
     # ===== 日志配置 =====
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")    # 日志级别：DEBUG, INFO, WARNING, ERROR
     
