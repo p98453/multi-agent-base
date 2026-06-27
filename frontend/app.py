@@ -1,97 +1,174 @@
-#!/usr/bin/env python3
-"""
-Streamlit 主应用 - 多智能体安全分析系统前端入口
-
-本文件是 Streamlit 多页面应用的主页面（Home Page），负责：
-1. 配置页面基本设置（标题、图标、布局）
-2. 展示系统欢迎页和核心功能介绍
-3. 在侧边栏显示后端连接状态和技术栈信息
-
-Streamlit 多页面应用结构说明：
-- 本文件（app.py）作为主入口和首页
-- frontend/pages/ 目录下的文件自动注册为子页面
-- 文件名格式「数字_emoji_名称.py」决定页面在侧边栏的排列顺序和显示名称
-"""
 import streamlit as st
+import sys
+import os
 
-# ==================== 页面配置 ====================
-# 必须在所有 Streamlit 命令之前调用 set_page_config()
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from frontend.utils.api_client import APIClient
+
 st.set_page_config(
-    page_title="多智能体安全分析系统",      # 浏览器标签页标题
-    page_icon="🛡️",                        # 浏览器标签页图标
-    layout="wide",                          # 宽屏布局，充分利用屏幕空间
-    initial_sidebar_state="expanded"        # 侧边栏默认展开
+    page_title="bid intelligence multi-agent system",
+    page_icon="",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# ==================== 主页面内容 ====================
-st.title("🛡️ 多智能体安全分析系统")
+st.title("bid intelligence multi-agent system")
+st.caption("gateway + sub-agent + loop | crawler | document | presentation | distribution | skill evolution")
 st.markdown("---")
 
-# 系统介绍和功能说明（Markdown 格式）
-st.markdown("""
-### 欢迎使用多智能体网络安全威胁智能分析系统
+api_client = APIClient("http://localhost:8000")
 
-本系统采用先进的多智能体架构，结合大语言模型技术，提供全方位的安全威胁分析能力。
-
-#### 🌟 核心功能
-
-**1. 🔍 告警分析**
-- 智能路由决策，自动选择最合适的专家智能体
-- 深度威胁分析，提供详细的攻击技术识别
-- 多专家协同，覆盖Web攻击、漏洞利用、非法连接等场景
-
-**2. 📊 分析历史**
-- 完整的分析记录追溯
-- 支持多维度过滤和搜索
-
-**3.  系统仪表板**
-- 实时统计信息
-- 威胁趋势分析
-
-#### 🚀 快速开始
-
-请从左侧导航栏选择功能模块:
-
-- **告警分析**: 提交新的安全告警进行分析
-- **分析历史**: 查看历史分析记录
-- **系统仪表板**: 查看系统统计和分析趋势
-
----
-
-""")
-
-# ==================== 侧边栏 ====================
 with st.sidebar:
-    st.header("系统信息")
-    
-    # 动态导入：将项目根目录添加到 Python 路径
-    # 这是因为 Streamlit 的工作目录可能不是项目根目录
-    import sys
-    import os
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from frontend.utils.api_client import APIClient
-    
-    # 创建前端 API 客户端实例，连接到本地后端服务
-    api_client = APIClient("http://localhost:8000")
-    
-    # 后端服务连接状态检测
-    # 通过调用 /api/health 端点判断后端是否在线
+    st.header("system status")
     if api_client.health_check():
-        st.success("✅ 后端服务已连接")
+        st.success("backend connected")
     else:
-        st.error("❌ 后端服务未连接")
-        st.info("请确保FastAPI后端服务正在运行: `python start_backend.py`")
-    
+        st.error("backend not connected")
+        st.info("start backend first: `python start_backend.py`")
+        st.stop()
+
     st.markdown("---")
-    
-    # 技术栈信息展示
+    st.markdown("**architecture**")
     st.markdown("""
-    **技术栈**
-    - 🎯 Streamlit (前端)
-    - ⚡ FastAPI (后端API)
-    - 🤖 多智能体系统
-    - 🧠 Qwen大语言模型
+    1. gateway - intent recognition + routing + quality control
+    2. crawler agent - multi-platform data crawling
+    3. document agent - parse + summarize + search + compare
+    4. presentation agent - PPT + charts + export
+    5. distribution agent - email + multi-channel push + scheduled tasks
+    6. loop - quality evaluation -> feedback -> retry (max 3)
+    7. skill evolution - feedback analysis -> root cause -> auto update
     """)
-    
+
     st.markdown("---")
-    st.caption("v1.0.0 | 多智能体安全分析系统")
+    st.subheader("quick actions")
+    if st.button("refresh system info"):
+        st.rerun()
+
+    st.markdown("---")
+    st.caption("v2.0 | bid intelligence system")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "task_feedback" not in st.session_state:
+    st.session_state.task_feedback = {}
+
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+        if msg.get("meta"):
+            with st.expander("details"):
+                st.json(msg["meta"])
+
+if prompt := st.chat_input("describe your bid intelligence needs..."):
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    st.session_state.messages.append({"role": "user", "content": prompt})
+
+    with st.chat_message("assistant"):
+        with st.spinner("gateway analyzing intent..."):
+            try:
+                result = api_client.chat(prompt)
+
+                st.markdown(result["response"])
+
+                route = result.get("routing", {})
+                agent = result.get("agent_info", {})
+                eval_info = result.get("evaluation", {})
+                perf = result.get("performance", {})
+                loop_history = result.get("loop_history", [])
+                skill_chain = result.get("skill_chain", [])
+
+                meta = {
+                    "task_id": result.get("task_id", ""),
+                    "routing": route,
+                    "agent": agent,
+                    "evaluation": eval_info,
+                    "performance": perf,
+                    "skill_chain": skill_chain,
+                    "loop_history": loop_history,
+                }
+
+                with st.expander("processing details + feedback"):
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.markdown(f"**route**: `{route.get('route', 'N/A')}` ({route.get('confidence', 0):.0%})")
+                        st.markdown(f"**reason**: {route.get('reason', 'N/A')}")
+                        st.markdown(f"**intent**: {route.get('user_intent_summary', 'N/A')}")
+                    with col2:
+                        st.markdown(f"**agent**: {agent.get('agent_type', 'N/A')}")
+                        st.markdown(f"**skill chain**: {' -> '.join(skill_chain) if skill_chain else 'N/A'}")
+                        st.markdown(f"**retries**: {agent.get('loop_count', 0)}")
+                    with col3:
+                        satisfaction = "passed" if eval_info.get('satisfied') else "failed"
+                        st.markdown(f"**quality**: {satisfaction} (score: {eval_info.get('weighted_score', 0):.1f})")
+                        st.markdown(f"**coverage**: {eval_info.get('coverage', 0)}/10")
+                        st.markdown(f"**accuracy**: {eval_info.get('accuracy', 0)}/10")
+                        st.markdown(f"**total time**: {perf.get('total_time_ms', 0)}ms")
+
+                    if loop_history and len(loop_history) > 1:
+                        st.markdown("**loop history**:")
+                        for lh in loop_history:
+                            loop_eval = lh.get("evaluation", {})
+                            st.markdown(f"- loop {lh.get('loop')}: score {loop_eval.get('weighted_score', 0):.1f} - {'passed' if loop_eval.get('satisfied') else 'feedback: ' + str(loop_eval.get('feedback', ''))[:100]}")
+
+                    st.markdown("---")
+                    st.markdown("**submit feedback for skill evolution**")
+                    fb_col1, fb_col2 = st.columns([3, 1])
+                    with fb_col1:
+                        feedback_text = st.text_area("feedback (tell us what went wrong):", key=f"fb_{result.get('task_id', '')}", placeholder="e.g. crawling results missing Jiangsu province data")
+                    with fb_col2:
+                        deviation = st.selectbox("deviation type:", ["", "content", "format", "accuracy", "completeness"], key=f"dev_{result.get('task_id', '')}")
+                        rating = st.slider("rating:", 1, 10, 5, key=f"rat_{result.get('task_id', '')}")
+                    if st.button("submit feedback -> trigger skill evolution", key=f"btn_{result.get('task_id', '')}"):
+                        if feedback_text.strip():
+                            with st.spinner("analyzing feedback and evolving skills..."):
+                                fb_result = api_client.submit_feedback(
+                                    result.get("task_id", ""),
+                                    feedback_text,
+                                    deviation_type=deviation if deviation else None,
+                                    rating=rating
+                                )
+                                if fb_result.get("evolution_applied"):
+                                    st.success(f"skill evolved: {fb_result.get('updated_skills', [])}")
+                                    st.info(f"root cause: {fb_result.get('root_cause', 'N/A')}")
+                                else:
+                                    st.warning(fb_result.get("message", "feedback received"))
+                        else:
+                            st.warning("please enter feedback text")
+
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": result["response"],
+                    "meta": meta
+                })
+
+            except Exception as e:
+                st.error(f"processing failed: {e}")
+
+with st.sidebar:
+    st.markdown("---")
+    st.subheader("skill management")
+    tab1, tab2 = st.tabs(["all skills", "evolution history"])
+    with tab1:
+        if st.button("load skills"):
+            try:
+                skills_data = api_client.list_skills()
+                skills = skills_data.get("skills", [])
+                for s in skills:
+                    st.markdown(f"**{s['name']}** ({s['agent_type']}) v{s['version']}")
+                    st.caption(f"{s['description'][:100]}")
+                    st.caption(f"evolutions: {s['evolution_count']} | params: {len(s.get('parameters', {}))}")
+                    st.markdown("---")
+            except Exception as e:
+                st.error(f"failed: {e}")
+    with tab2:
+        if st.button("load evolution history"):
+            try:
+                evo_data = api_client.get_evolution_history()
+                for e in evo_data.get("history", [])[-10:]:
+                    st.markdown(f"**{e.get('skill_name')}** v{e.get('old_version')} -> v{e.get('new_version', e.get('old_version', 1)+1)}")
+                    st.caption(f"reason: {e.get('reason', '')[:100]}")
+                    st.caption(f"time: {e.get('timestamp', '')}")
+                    st.markdown("---")
+            except Exception as e:
+                st.error(f"failed: {e}")

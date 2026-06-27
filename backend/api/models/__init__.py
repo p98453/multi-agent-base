@@ -1,14 +1,4 @@
 # API models module
-from .schemas import (
-    AlertData,
-    AnalysisResult,
-    AnalysisHistory,
-    SystemStats,
-)
+from .schemas import ChatRequest, ChatResponse
 
-__all__ = [
-    'AlertData',
-    'AnalysisResult',
-    'AnalysisHistory',
-    'SystemStats',
-]
+__all__ = ['ChatRequest', 'ChatResponse']

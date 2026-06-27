@@ -1,6 +1,5 @@
-# Agents module
-from .optimized_router import OptimizedRouterAgent
-from .optimized_expert import OptimizedExpertAgent
-from .optimized_system import MultiAgentSystem
+from src.agents.gateway import GatewayAgent
+from src.agents.orchestrator import MultiAgentOrchestrator
+from src.agents.sub_agents import CrawlerAgent, DocumentAgent, PresentationAgent
 
-__all__ = ['OptimizedRouterAgent', 'OptimizedExpertAgent', 'MultiAgentSystem']
+__all__ = ['GatewayAgent', 'MultiAgentOrchestrator', 'CrawlerAgent', 'DocumentAgent', 'PresentationAgent']
