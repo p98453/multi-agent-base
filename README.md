@@ -17,6 +17,8 @@
                     │
               Skill进化引擎 ─── 用户反馈 → 5Why根因分析 → 自动修改Skill → 验证 → 部署
 ```
+## 系统界面
+![alt text](image.png)
 
 ## 核心流程 (Loop架构)
 
