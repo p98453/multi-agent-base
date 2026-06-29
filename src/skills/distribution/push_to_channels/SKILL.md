@@ -1,14 +1,16 @@
 ---
+
 name: push_to_channels
 description: 将系统产出内容分发到多个渠道（企业微信、钉钉、飞书、短信、内部系统API），支持一键多端推送
 agent_type: distribution
 version: 1
 parameters:
   content: dict - 需要分发的内容
-  channels: list[str] - 目标分发渠道: email|wechat_work|dingtalk|feishu|sms|internal_system
+  channels: "list[str] - 目标分发渠道: email|wechat_work|dingtalk|feishu|sms|internal_system"
   channel_configs: dict - 各渠道的API配置
   content_adapter: dict - 各渠道的内容适配规则
-  batch_config: dict - 批量分发配置 {batch_size, interval_seconds}
+  batch_config: "dict - 批量分发配置 {batch_size, interval_seconds}"
+
 ---
 
 你是一个多端分发推送专家。负责将系统产出内容同时推送到多个渠道。

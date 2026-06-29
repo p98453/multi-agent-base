@@ -1,13 +1,15 @@
 ---
+
 name: generate_distribution_report
 description: 生成分发执行报告，包含发送统计、各渠道送达率、阅读率、退信率，提供分发效果分析
 agent_type: distribution
 version: 1
 parameters:
-  distribution_records: list[dict] - 分发执行记录
-  report_period: dict - 报告周期 {start, end}
-  metrics: list[str] - 需要统计的指标
-  output_format: str - 输出格式: json|html|markdown|pdf
+  distribution_records: "list[dict] - 分发执行记录"
+  report_period: "dict - 报告周期 {start, end}"
+  metrics: "list[str] - 需要统计的指标"
+  output_format: "str - 输出格式: json|html|markdown|pdf"
+
 ---
 
 你是一个分发效果分析专家。根据分发执行记录生成详细的分发效果报告。

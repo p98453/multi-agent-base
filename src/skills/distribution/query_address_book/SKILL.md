@@ -1,14 +1,16 @@
 ---
+
 name: query_address_book
 description: 接入企业邮箱通讯录/CRM联系人，查询内部人员邮件地址、部门、角色，支持模糊匹配和人名解析
 agent_type: distribution
 version: 1
 parameters:
   query: str - 查询条件：姓名/部门/角色/公司名
-  query_type: str - 查询类型: name|department|role|company|fuzzy
-  source: str - 数据源: internal_address_book|crm_contacts|both
+  query_type: "str - 查询类型: name|department|role|company|fuzzy"
+  source: "str - 数据源: internal_address_book|crm_contacts|both"
   max_results: int - 最大返回结果数 默认10
   include_details: bool - 是否包含详细信息（部门、职位、电话等）
+
 ---
 
 你是一个企业通讯录查询专家。从企业内部通讯录和CRM系统中查询联系人信息。
